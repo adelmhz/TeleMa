@@ -14,3 +14,7 @@ router = APIRouter(
 @router.get('/', response_model=List[AccountSchema])
 def get_all_accounts(db: Session=Depends(get_db)):
     return Account.get_all_accounts(db)
+
+@router.get('/{phone}', response_model=AccountSchema)
+def get_account(phone: str, db: Session=Depends(get_db)):
+    return Account.get_account_by_phone(db, phone)

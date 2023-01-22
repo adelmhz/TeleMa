@@ -1,4 +1,5 @@
 import datetime
+from fastapi import HTTPException, status
 from sqlalchemy import (
     Column, ForeignKey, Integer, String, Boolean, DateTime
 )
@@ -19,6 +20,17 @@ class Account(Base):
     @staticmethod
     def get_all_accounts(db: Session):
         return db.query(Account).all()
+
+    @staticmethod
+    def get_account_by_phone(db: Session, phone: str):
+        account =  db.query(Account).filter(Account.phone==phone).first()
+        if not account:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f'Account with phone {phone} not found!'
+            )
+
+        return account
 
 class Member(Base):
     __tablename__ = 'members'
