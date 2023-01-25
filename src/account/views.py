@@ -1,3 +1,4 @@
+from http import client
 from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm.session import Session
@@ -9,7 +10,7 @@ from pyrogram.enums import ChatType
 from db.database import get_db
 from .deps import get_client
 from .models import Account
-from .schema import AccountSimpleSchema, MessageSchema, PhoneCodeHashSchema, AddAccountBaseSchema, UserSimpleSchema
+from .schema import AccountSimpleSchema, MessageSchema, PhoneCodeHashSchema, AddAccountBaseSchema, SendMessageSchema, UserSimpleSchema
 
 router = APIRouter(
     prefix='/accounts',
@@ -96,3 +97,21 @@ def get_unread_messages(client: Client=Depends(get_client)):
 
     return result
 
+@router.post(
+    '/messages/send',
+    response_model=MessageSchema,
+    tags=['messages']
+)
+def send_message(
+    request: SendMessageSchema,
+    client: Client=Depends(get_client)
+):
+    me = client.get_me()
+
+    message = client.send_message(chat_id=request.to_user, text=request.text)
+    return MessageSchema(
+        from_user=UserSimpleSchema(phone=me.phone_number),
+        to_user=UserSimpleSchema(username=message.chat.username),
+        date=message.date,
+        text=message.text
+    )

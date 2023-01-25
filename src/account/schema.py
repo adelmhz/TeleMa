@@ -31,3 +31,8 @@ class MessageSchema(BaseModel):
     to_user: UserSimpleSchema
     date: Optional[datetime]
     text: Optional[str]
+
+class SendMessageSchema(BaseModel):
+    from_user: str
+    to_user: str
+    text: str
