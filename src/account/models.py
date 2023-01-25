@@ -18,11 +18,11 @@ class Account(Base):
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     @staticmethod
-    def get_all_accounts(db: Session):
+    async def get_all_accounts(db: Session):
         return db.query(Account).all()
 
     @staticmethod
-    def get_account_by_phone(db: Session, phone: str):
+    async def get_account_by_phone(db: Session, phone: str):
         account =  db.query(Account).filter(Account.phone==phone).first()
         if not account:
             raise HTTPException(
