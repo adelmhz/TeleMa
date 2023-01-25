@@ -94,6 +94,7 @@ def get_unread_messages(client: Client=Depends(get_client)):
                         text=message.text
                     )
                 )
+            client.read_chat_history(chat_id=dialog.chat.id)
 
     return result
 
