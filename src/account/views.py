@@ -66,8 +66,8 @@ async def add_account(
     db.refresh(account_obj)
     return account_obj
 
-@router.get('/messages/unreads', response_model=List[MessageSchema], tags=['messages'])
-def get_unread_messages(client: Client=Depends(get_client)):
+@router.get('/{account}/messages/unreads', response_model=List[MessageSchema], tags=['messages'])
+def get_unread_messages(account: str, client: Client=Depends(get_client)):
     """
     Get all unread messages of accounts and return messages.
     """
@@ -99,11 +99,12 @@ def get_unread_messages(client: Client=Depends(get_client)):
     return result
 
 @router.post(
-    '/messages/send',
+    '/{account}/messages/send',
     response_model=MessageSchema,
     tags=['messages']
 )
 def send_message(
+    account: str,
     request: SendMessageSchema,
     client: Client=Depends(get_client)
 ):
