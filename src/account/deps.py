@@ -17,3 +17,16 @@ async def get_client() -> AsyncGenerator:
     finally:
         await client.disconnect()
 
+async def new_client():
+    client = Client(
+            ':on-memory',
+            api_id=settings.API_ID,
+            api_hash=settings.API_HASH,
+            in_memory=True
+    )
+    try:
+        await client.connect()
+        yield client
+    finally:
+        await client.disconnect()
+

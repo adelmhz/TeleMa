@@ -22,9 +22,15 @@ class AddAccountBaseSchema(BaseModel):
 class PhoneCodeHashSchema(BaseModel):
     phone_code_hash: str
 
+class LoginCodeSchema(BaseModel):
+    code: str
+
 class UserSimpleSchema(BaseModel):
     phone: Optional[str]
     username: Optional[str]
+
+class SuccessSchema(BaseModel):
+    success: bool
 
 class MessageSchema(BaseModel):
     from_user: UserSimpleSchema

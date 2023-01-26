@@ -1,7 +1,12 @@
+import os
 
 class Settings:
     API_ID = '4699123'
     API_HASH = '281f234f99f9f0cb72b5f2c39c33549e'
-    session_string = 'BQBHs_MAHxJg1QNotghs8HFaUTp_DVG3WIj52MVLQ0ljCsQidssOM0d9h8Aqrxqe0f9p8Q87AYmoc1OWa_9D0sSwg9lQ-UrXpYzvpLPJ_H4Hzhx4KTnJuMBkWp-mAE2q7m8aY3xe9dqHN-vkPo0Da3hpxni0FGTDszi7OUaYinFgLB9aogue4cHww4uOkGraGVkzkBCuGs1KH4C2edH4hsjE5IRVwsJvgrMQSlO8BRPhfvQgWY-5xDstjm21gKhsJr_fWsfyXXmJkwQoYedIqcnk2Q20cfyQ2Mm4WKvM-HKX3ZunJ7AR0SxC8CwcaGkLQGC8tX2_nuLmGZt6_6i0AYATjLSXVwAAAAB_VUjMAA'
+    session_string = 'BQAJEtgAt64UpXk6fu6sRYnA98M19QuI1l2l32x9kI_CrixwvaNcnfIcmKZQ-ZIfQHnyNIQylS0dj2G_N8NecbAHPQ9dX9577Ks42qZCOZyVsz7-dKh0pYdpVLWJcY4G3YJitcvAtFQQzmr0AahASOtNWSbcbdHSv_fGbUQ-d6TL7gGagtQp1tl0aeAzT_Ljp4Jkgat5PQ39PhAh4zAF2I0J1jhzCG5hpdCvpYkXR7WTkE_T-_JWrPSB4KEHO6nVSUKjpkXt_XwopH3-PqfSMRuT4FvUwimPqJU1RzokwzUCzxwA_5lyFc830P83wX0tY1uimS_-cM2idXcOTvRmX6pv4eDNCgAAAAB_VUjMAA'
     phone = '+8801969895867'
+    TELEGRAM_CHAT_ID = 777000
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    UPLOAD_PATH = os.path.join(BASE_DIR, 'uploads')
+
 settings = Settings()
