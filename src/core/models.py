@@ -16,6 +16,8 @@ class Account(Base):
     ip = Column(String(55), nullable=True)
     status = Column(String(55), nullable=True)
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship('User', back_populates='accounts')
 
     @staticmethod
     async def get_all_accounts(db: Session):
@@ -47,6 +49,9 @@ class User(Base):
     messages = relationship(
         'Message', back_populates='user',
         cascade="all, delete", passive_deletes=True)
+    accounts = relationship(
+        'Account', back_populates='user'
+    )
 
 
 class Message(Base):

@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 
+class AddGroupSchema(BaseModel):
+    chat_id: str
+
 class UserModelSimpleSchema(BaseModel):
     id: int
     chat_id: str
