@@ -6,6 +6,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, Session
 
 from db.database import Base
+from services.schema import CreateMessageSchema
 
 class Account(Base):
     __tablename__ = 'accounts'
@@ -55,3 +56,36 @@ class Message(Base):
     # media = ...
     user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
     user = relationship('User', back_populates='messages')
+
+    @staticmethod
+    async def get_all_messages(db: Session, user: User):
+        return db.query(Message).filter(
+            Message.user_id==user.id
+        ).all()
+
+
+    @staticmethod
+    async def get_message(id: int, db: Session, user: User):
+        message = db.query(Message).filter(
+            Message.id==id,
+            Message.user_id==user.id
+        ).first()
+        return message
+
+    @staticmethod
+    async def create_message(request: CreateMessageSchema, db: Session, user: User):
+        new_message = Message(user_id=user.id, text=request.text)
+        db.add(new_message)
+        db.commit()
+        db.refresh(new_message)
+        return new_message
+
+    @staticmethod
+    async def delete_message(id: int, db: Session, user: User):
+        message = db.query(Message).filter(
+            Message.id==id,
+            Message.user_id==user.id
+        ).first()
+        db.delete(message)
+        db.commit()
+        return 'ok'

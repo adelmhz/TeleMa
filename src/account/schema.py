@@ -28,6 +28,9 @@ class LoginCodeSchema(BaseModel):
 class UserSimpleSchema(BaseModel):
     phone: Optional[str]
     username: Optional[str]
+    
+    class Config:
+        orm_mode = True
 
 class SuccessSchema(BaseModel):
     success: bool

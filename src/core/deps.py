@@ -1,7 +1,12 @@
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator
+from fastapi import Depends
 from pyrogram import Client
 from pyrogram.types import Message
+from sqlalchemy.orm.session import Session
+
 from core.config import settings
+from core.models import User
+from db.database import get_db
 
 
 async def get_client() -> AsyncGenerator:
@@ -30,3 +35,7 @@ async def new_client():
     finally:
         await client.disconnect()
 
+
+async def get_user(db: Session=Depends(get_db)) -> User:
+    user = db.query(User).filter(User.id==1).first()
+    return user
