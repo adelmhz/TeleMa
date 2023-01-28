@@ -9,7 +9,7 @@ from pyrogram.enums import ChatType
 from core.config import settings
 from db.database import get_db
 from .deps import get_client, new_client
-from .models import Account
+from core.models import Account
 from .schema import AccountSimpleSchema, LoginCodeSchema, MessageSchema, PhoneCodeHashSchema, AddAccountBaseSchema, SendMessageSchema, SuccessSchema, UserSimpleSchema
 
 router = APIRouter(
