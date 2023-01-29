@@ -6,7 +6,7 @@ from .schema import AddGroupSchema, CreateMessageSchema, MessageSchema
 from core.deps import get_user
 from core.models import Message, User
 from db.database import get_db
-from .tasks import send_service_task
+from .tasks import send_service_task, add_to_group_task
 
 router = APIRouter(
     prefix='/services',
@@ -69,4 +69,14 @@ async def send_service(
     db: Session=Depends(get_db)
 ):
     background_tasks.add_task(send_service_task, user, db)
+    return {'message': 'started'}
+
+@router.post('/add-to-group')
+async def add_to_group_service(
+    request: AddGroupSchema,
+    background_tasks: BackgroundTasks,
+    user: User = Depends(get_user),
+    db: Session=Depends(get_db)
+):
+    background_tasks.add_task(add_to_group_task, request.chat_id, user, db)
     return {'message': 'started'}
