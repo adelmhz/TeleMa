@@ -16,6 +16,7 @@ class Account(Base):
     ip = Column(String(55), nullable=True)
     status = Column(String(55), nullable=True)
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
+    login_code = Column(String(55), nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='accounts')
 
@@ -32,6 +33,19 @@ class Account(Base):
                 detail=f'Account with phone {phone} not found!'
             )
 
+        return account
+
+    @staticmethod
+    async def create_account(db: Session, user, request, status='active'):
+        account = Account(
+            phone=request.phone,
+            status=status,
+            user=user,
+            user_id=user.id,
+        )
+        db.add(account)
+        db.commit()
+        db.refresh(account)
         return account
 
 class Member(Base):

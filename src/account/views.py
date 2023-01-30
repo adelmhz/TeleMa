@@ -1,16 +1,22 @@
 import os
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi import (APIRouter, BackgroundTasks, Depends,
+                     HTTPException, UploadFile, status)
 from sqlalchemy.orm.session import Session
 from pyrogram import Client
 from pyrogram.enums import ChatType
-
+from account.tasks import add_account_task
 
 from core.config import settings
 from db.database import get_db
-from core.deps import get_client, new_client
-from core.models import Account
-from .schema import AccountSimpleSchema, LoginCodeSchema, MessageSchema, PhoneCodeHashSchema, AddAccountBaseSchema, SendMessageSchema, SuccessSchema, UserSimpleSchema
+from core.deps import get_client, new_client, get_user
+from core.models import Account, User
+from .schema import (
+    AccountSimpleSchema, LoginCodeSchema,
+    MessageSchema, AddAccountBaseSchema,
+    SendLoginCodeSchema, SendMessageSchema,
+    SuccessSchema, UserSimpleSchema
+)
 
 router = APIRouter(
     prefix='/accounts',
@@ -25,6 +31,24 @@ async def get_all_accounts(db: Session = Depends(get_db)):
     """
     return await Account.get_all_accounts(db)
 
+@router.post('/add', response_model=AccountSimpleSchema)
+async def add_account(
+    request: AddAccountBaseSchema,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_user),
+):
+    """
+    Add telegram account for user.
+    """
+    try:
+        account = await Account.get_account_by_phone(db, request.phone)
+    except:
+        account = await Account.create_account(db, user, request)
+
+    background_tasks.add_task(add_account_task, db, request)
+
+    return account
 
 @router.get('/{phone}', response_model=AccountSimpleSchema)
 async def get_account(phone: str, db: Session = Depends(get_db)):
@@ -34,17 +58,20 @@ async def get_account(phone: str, db: Session = Depends(get_db)):
     return await Account.get_account_by_phone(db, phone)
 
 
-@router.post('/sent_code/{phone}', response_model=PhoneCodeHashSchema)
+@router.post('/sent_code/{phone}', response_model=SuccessSchema)
 async def sent_code(
     phone: str,
-    client=Depends(new_client)
+    request: SendLoginCodeSchema,
+    db: Session = Depends(get_db)
 ):
     """
     Send telegram code and return phone hash code of account.
     """
-    code = await client.send_code(phone)
-    return {'phone_code_hash': code.phone_code_hash}
-
+    account = db.query(Account).filter(Account.phone == phone)
+    account.update({Account.login_code: request.login_code})
+    db.commit()
+    db.refresh(account)
+    return SuccessSchema(success=True)
 
 @router.get('/{account}/login-code')
 async def get_login_code(
@@ -60,31 +87,6 @@ async def get_login_code(
         return LoginCodeSchema(code=message.text)
 
 
-@router.post('/{phone}', response_model=AccountSimpleSchema)
-async def add_account(
-    account: AddAccountBaseSchema,
-    client=Depends(get_client),
-    db: Session = Depends(get_db)
-):
-    """
-    Add telegram account for user.
-    """
-
-    user = await client.sign_in(
-        phone=account.phone,
-        phone_code_hash=account.phone_code_hash,
-        code=account.code,
-        password=account.password
-    )
-    session_string = await client.session.save()
-    print(session_string)
-    account_obj = Account(phone=user.phone, session=session_string)
-    db.add(account)
-    db.commit()
-    db.refresh(account_obj)
-    return account_obj
-
-
 @router.post('/{account}/profile/photo', response_model=SuccessSchema)
 def change_profile_photo(
     account: str,
@@ -98,7 +100,8 @@ def change_profile_photo(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail='send valid image.')
 
-    file_path = os.path.join(settings.UPLOAD_PATH, f'{account}-{photo.filename}')
+    file_path = os.path.join(settings.UPLOAD_PATH,
+                             f'{account}-{photo.filename}')
     try:
         contents = photo.file.read()
         with open(file_path, 'wb') as f:

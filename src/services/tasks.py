@@ -1,5 +1,3 @@
-import random
-from fastapi import Depends
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql import func
 from pyrogram import Client
@@ -7,7 +5,6 @@ from pyrogram.errors.exceptions.bad_request_400 import PeerFlood, ChannelInvalid
 
 from core.config import settings
 from core.models import Account, Member, Message, User
-from db.database import get_db
 
 
 async def send_service_task(user: User, db: Session):

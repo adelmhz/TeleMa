@@ -12,15 +12,13 @@ class AccountSimpleSchema(BaseModel):
 
 class AddAccountBaseSchema(BaseModel):
     phone: str
-    code: str
-    phone_code_hash: str
     password: Optional[str]
 
     class Config:
         orm_mode = True
 
-class PhoneCodeHashSchema(BaseModel):
-    phone_code_hash: str
+class SendLoginCodeSchema(BaseModel):
+    login_code: str
 
 class LoginCodeSchema(BaseModel):
     code: str
@@ -28,7 +26,7 @@ class LoginCodeSchema(BaseModel):
 class UserSimpleSchema(BaseModel):
     phone: Optional[str]
     username: Optional[str]
-    
+
     class Config:
         orm_mode = True
 
