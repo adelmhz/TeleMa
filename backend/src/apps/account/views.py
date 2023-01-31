@@ -1,7 +1,9 @@
 import os
+import itertools
+import pandas
 from typing import List
 from fastapi import (APIRouter, BackgroundTasks, Depends,
-                     HTTPException, UploadFile, status)
+                     HTTPException, UploadFile, status, File)
 from sqlalchemy.orm.session import Session
 from pyrogram import Client
 from pyrogram.enums import ChatType
@@ -10,7 +12,7 @@ from .tasks import add_account_task
 from core.config import settings
 from db.database import get_db
 from core.deps import get_client, new_client, get_user
-from core.models import Account, User
+from core.models import Account, Member, User
 from .schema import (
     AccountSimpleSchema, LoginCodeSchema,
     MessageSchema, AddAccountBaseSchema,
@@ -179,3 +181,40 @@ def send_message(
         date=message.date,
         text=message.text
     )
+
+@router.post(
+    '/members/add',
+    response_model=SuccessSchema,
+    tags=['members']
+)
+async def add_members(
+    file: UploadFile,
+    user: User=Depends(get_user),
+    db: Session=Depends(get_db)
+):
+    """
+    Get excel file and parse usernames and save them in database.
+    """
+    if file.content_type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail='send xlsx file.')
+
+    # read xsls file
+    data = pandas.read_excel(await file.read(), index_col=None, header=None)
+    # get all rows
+    data_usernames = data.values.tolist()
+    # combine data to one list
+    usernames = list(itertools.chain.from_iterable(data_usernames))
+
+    usernames_obj = [
+        Member(
+            username=user,
+            status='active'
+        )
+        for user in usernames
+    ]
+    db.bulk_save_objects(usernames_obj)
+    db.commit()
+
+    return SuccessSchema(success=True)
+
