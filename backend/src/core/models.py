@@ -1,7 +1,7 @@
 import datetime
 from fastapi import HTTPException, status
 from sqlalchemy import (
-    Column, ForeignKey, Integer, String, DateTime, Text
+    Boolean, Column, ForeignKey, Integer, String, DateTime, Text
 )
 from sqlalchemy.orm import relationship, Session
 
@@ -59,6 +59,7 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
     chat_id = Column(String(55), nullable=True)
+    is_active = Column(Boolean, default=False)
     package = Column(String(55), nullable=True)
     messages = relationship(
         'Message', back_populates='user',

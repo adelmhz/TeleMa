@@ -1,5 +1,5 @@
 from typing import AsyncGenerator
-from fastapi import Depends
+from fastapi import Depends, Header, HTTPException, status
 from pyrogram import Client
 from pyrogram.types import Message
 from sqlalchemy.orm.session import Session
@@ -39,3 +39,18 @@ async def new_client():
 async def get_user(db: Session=Depends(get_db)) -> User:
     user = db.query(User).filter(User.id==1).first()
     return user
+
+async def get_user_by_header(
+    chat_id: str | None = Header(default=None),
+    db: Session=Depends(get_db)
+):
+    try:
+        user = db.query(User).filter(User.id==1).first()
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
+            detail='User does not exist.'
+        )
+
+    return user
+
