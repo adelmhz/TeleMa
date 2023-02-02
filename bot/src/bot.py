@@ -11,12 +11,12 @@ bot = AsyncTeleBot(settings.API_TOKEN)
 def register_handlers():
     bot.register_message_handler(
         user_handlers.send_welcome,
-        commands=['start'],
+        commands=['af'],
         is_user_active=False,
         pass_bot=True)
     bot.register_message_handler(
         user_handlers.home,
-        commands=['start'],
+        commands=['af'],
         is_user_active=True,
         pass_bot=True)
 

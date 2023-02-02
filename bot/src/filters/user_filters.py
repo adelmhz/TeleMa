@@ -3,6 +3,9 @@ import aiohttp
 from telebot.types import Message
 from telebot.asyncio_filters import SimpleCustomFilter
 
+from utils.api_helpers import get_user_status
+
+
 class IsUserDeActive(SimpleCustomFilter):
     """
     Check if user is active or not
@@ -10,9 +13,6 @@ class IsUserDeActive(SimpleCustomFilter):
     key = 'is_user_active'
 
     async def check(self, message: Message):
-        async with aiohttp.ClientSession() as session:
-            async with session.get('http://localhost:8000/users/me/status') as resp:
-                response = await resp.json()
-                user_status = response['is_active']
-                print(user_status)
-                return user_status
+        chat_id = str(message.chat.id)
+        user_status = await get_user_status(chat_id=chat_id)
+        return user_status

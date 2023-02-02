@@ -11,6 +11,7 @@ async def send_welcome(message: Message, bot: AsyncTeleBot):
     """
     await bot.send_message(message.chat.id, messages.start, reply_markup=quick_setup_menu())
 
+
 async def home(message: Message, bot: AsyncTeleBot):
     """
     If user is active, show home menu.
