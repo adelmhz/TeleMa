@@ -47,7 +47,11 @@ async def _make_request(
                 f"Invalid method: {method}. Only 'GET', 'POST', 'PUT', 'PATCH' or 'DELETE' are allowed.")
 
 
-async def get_user_status(chat_id: str):
+async def get_user_status(chat_id: str) -> bool:
+    """
+    Get user status and return dict information
+    """
+
     url = 'http://localhost:8000/users/me/status'
     response, status = await _make_request(url=url, method='GET', chat_id=chat_id)
     return response['is_active']

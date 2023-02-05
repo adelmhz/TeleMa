@@ -20,7 +20,7 @@ async def quick_setup(message: Message, bot: AsyncTeleBot):
 
     Command: `utils.consts.Commands.QUICK_SETUP`
     """
-    await bot.send_message(message.chat.id, "You have to add accounts")
+    pass
 
 
 async def home(message: Message, bot: AsyncTeleBot):

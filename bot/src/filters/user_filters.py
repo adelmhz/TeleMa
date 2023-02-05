@@ -15,7 +15,7 @@ class IsUserActive(SimpleCustomFilter):
     async def check(self, message: Message):
         chat_id = str(message.chat.id)
         user_status = await get_user_status(chat_id=chat_id)
-        return user_status
+        return user_status['is_active']
 
 def bind_filters(bot: AsyncTeleBot):
     bot.add_custom_filter(IsUserActive())

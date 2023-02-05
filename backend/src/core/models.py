@@ -4,6 +4,7 @@ from sqlalchemy import (
     Boolean, Column, ForeignKey, Integer, String, DateTime, Text
 )
 from sqlalchemy.orm import relationship, Session
+from sqlalchemy.sql import exists
 
 from db.database import Base
 from apps.services.schema import CreateMessageSchema
@@ -48,12 +49,15 @@ class Account(Base):
         db.refresh(account)
         return account
 
+
 class Member(Base):
     __tablename__ = 'members'
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(55), nullable=True)
     status = Column(String(55), nullable=True)
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship('User', back_populates='members')
 
 class User(Base):
     __tablename__ = 'users'
@@ -67,6 +71,17 @@ class User(Base):
     accounts = relationship(
         'Account', back_populates='user'
     )
+    members = relationship(
+        'Member', back_populates='user'
+    )
+
+    @staticmethod
+    async def have_accounts(db: Session, user):
+        return db.query(exists().where(Account.user_id==user.id)).scalar()
+
+    @staticmethod
+    async def have_members(db: Session, user):
+        return db.query(exists().where(Member.user_id==user.id)).scalar()
 
 
 class Message(Base):
