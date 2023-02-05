@@ -26,7 +26,6 @@ async def _make_request(
     if chat_id:
         headers = {'chat_id': chat_id}
 
-
     async with aiohttp.ClientSession(headers=headers) as session:
         if method == 'GET':
             async with session.get(url) as resp:
@@ -44,8 +43,8 @@ async def _make_request(
             async with session.delete(url) as resp:
                 return await resp.json(), resp.status
         else:
-            raise ValueError(f"Invalid method: {method}. Only 'GET', 'POST', 'PUT', 'PATCH' or 'DELETE' are allowed.")
-
+            raise ValueError(
+                f"Invalid method: {method}. Only 'GET', 'POST', 'PUT', 'PATCH' or 'DELETE' are allowed.")
 
 
 async def get_user_status(chat_id: str):

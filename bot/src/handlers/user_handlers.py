@@ -1,7 +1,7 @@
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
 
-from utils import messages
+from utils.consts import Messages
 from utils.menus import home_menu, quick_setup_menu
 
 
@@ -11,7 +11,8 @@ async def send_welcome(message: Message, bot: AsyncTeleBot):
 
     command: /start
     """
-    await bot.send_message(message.chat.id, messages.start, reply_markup=quick_setup_menu())
+    await bot.send_message(message.chat.id, Messages.START, reply_markup=quick_setup_menu())
+
 
 async def quick_setup(message: Message, bot: AsyncTeleBot):
     """
@@ -19,8 +20,7 @@ async def quick_setup(message: Message, bot: AsyncTeleBot):
 
     Command: `utils.consts.Commands.QUICK_SETUP`
     """
-    pass
-
+    await bot.send_message(message.chat.id, "You have to add accounts")
 
 
 async def home(message: Message, bot: AsyncTeleBot):
@@ -29,4 +29,4 @@ async def home(message: Message, bot: AsyncTeleBot):
 
     command: /start
     """
-    await bot.send_message(message.chat.id, messages.start, reply_markup=home_menu())
+    await bot.send_message(message.chat.id, Messages.START, reply_markup=home_menu())
