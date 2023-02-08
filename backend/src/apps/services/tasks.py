@@ -62,3 +62,5 @@ async def add_to_group_task(chat_id: int, user: User, db: Session):
                         print(f'{account.phone} is limited.============')
                     except ChannelInvalid:
                         print(f'{account.phone} is not an admin.-=-=-=-=-=-=-')
+                    except:
+                        print('chat_id is wrong.')

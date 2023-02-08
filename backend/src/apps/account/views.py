@@ -1,17 +1,17 @@
 import os
 import itertools
 import pandas
+from collections import OrderedDict
 from typing import List
 from fastapi import (APIRouter, BackgroundTasks, Depends,
                      HTTPException, UploadFile, status, File)
 from sqlalchemy.orm.session import Session
 from pyrogram import Client
 from pyrogram.enums import ChatType
-from .tasks import add_account_task
 
 from core.config import settings
 from db.database import get_db
-from core.deps import get_client, new_client, get_user
+from core.deps import get_client, get_user_by_header, new_client, get_user
 from core.models import Account, Member, User
 from .schema import (
     AccountSimpleSchema, LoginCodeSchema,
@@ -19,6 +19,7 @@ from .schema import (
     SendLoginCodeSchema, SendMessageSchema,
     SuccessSchema, UserSimpleSchema
 )
+from .tasks import add_account_task
 
 router = APIRouter(
     prefix='/accounts',
@@ -188,7 +189,7 @@ def send_message(
 )
 async def add_members(
     file: UploadFile,
-    user: User=Depends(get_user),
+    user: User=Depends(get_user_by_header),
     db: Session=Depends(get_db)
 ):
     """
@@ -204,13 +205,14 @@ async def add_members(
     data_usernames = data.values.tolist()
     # combine data to one list
     usernames = list(itertools.chain.from_iterable(data_usernames))
-
+    usernames = list(OrderedDict.fromkeys(usernames))
     usernames_obj = [
         Member(
-            username=user,
-            status='active'
+            username=username,
+            status='active',
+            user_id=user.id,
         )
-        for user in usernames
+        for username in usernames
     ]
     db.bulk_save_objects(usernames_obj)
     db.commit()

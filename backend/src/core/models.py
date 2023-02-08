@@ -19,7 +19,8 @@ class Account(Base):
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
     login_code = Column(String(55), nullable=True)
     reports = relationship(
-        'Report', back_populates='account'
+        'Report', back_populates='account',
+        cascade="all, delete", passive_deletes=True
     )
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='accounts')
@@ -132,7 +133,7 @@ class Message(Base):
 class Report(Base):
     __tablename__ = 'reports'
     id = Column(Integer, primary_key=True, index=True)
-    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account_id = Column(Integer, ForeignKey('accounts.id', ondelete="CASCADE"))
     account = relationship('Account', back_populates='reports')
     action = Column(String(55), nullable=True)
 

@@ -12,8 +12,8 @@ class Settings:
      "scheme": "socks5",  # "socks4", "socks5" and "http" are supported
      "hostname": "pr.roxlabs.cn",
      "port": 4600,
-     "username": "user-rox1548187-region-id",
-     "password": "123456qq"
+     "username": "user-mikkkiiieee-region-id",
+     "password": "asd123123000"
  }
 
 settings = Settings()
