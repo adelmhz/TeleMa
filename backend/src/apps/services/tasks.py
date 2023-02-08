@@ -4,7 +4,7 @@ from pyrogram import Client
 from pyrogram.errors.exceptions.bad_request_400 import PeerFlood, ChannelInvalid
 
 from core.config import settings
-from core.models import Account, Member, Message, User
+from core.models import Account, Member, Message, User, Report
 
 
 async def send_service_task(user: User, db: Session):
@@ -48,10 +48,15 @@ async def add_to_group_task(chat_id: int, user: User, db: Session):
                 account.phone,
                 settings.API_ID,
                 settings.API_HASH,
+                proxy=settings.PROXY,
                 session_string=account.session) as app:
-
                     try:
                         await app.add_chat_members(chat_id=chat_id, user_ids=member)
+                        Report.create_report(
+                            db=db,
+                            account_id=account.id,
+                            action='add_to_group'
+                        )
                         member_added = True
                     except PeerFlood:
                         print(f'{account.phone} is limited.============')

@@ -8,5 +8,12 @@ class Settings:
     TELEGRAM_CHAT_ID = 777000
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     UPLOAD_PATH = os.path.join(BASE_DIR, 'uploads')
+    PROXY = {
+     "scheme": "socks5",  # "socks4", "socks5" and "http" are supported
+     "hostname": "pr.roxlabs.cn",
+     "port": 4600,
+     "username": "user-rox1548187-region-id",
+     "password": "123456qq"
+ }
 
 settings = Settings()

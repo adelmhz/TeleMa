@@ -4,7 +4,6 @@ from .consts import Commands
 
 def home_menu():
     markup = types.ReplyKeyboardMarkup()
-    quick_setup = types.KeyboardButton(Commands.QUICK_SETUP)
     send = types.KeyboardButton(Commands.SEND)
     add = types.KeyboardButton(Commands.ADD)
     show_unread_messages = types.KeyboardButton(Commands.SHOW_UNREAD_MESSAGES)
@@ -14,9 +13,8 @@ def home_menu():
     members = types.KeyboardButton(Commands.MEMBERS)
     support = types.KeyboardButton(Commands.SUPPORT)
 
-    markup.row(quick_setup)
-    markup.row(send, add)
     markup.row(show_unread_messages)
+    markup.row(send, add)
     markup.row(setting, report)
     markup.row(accounts, members)
     markup.row(support)

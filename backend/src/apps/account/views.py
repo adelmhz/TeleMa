@@ -72,7 +72,6 @@ async def sent_code(
     account = db.query(Account).filter(Account.phone == phone)
     account.update({Account.login_code: request.login_code})
     db.commit()
-    db.refresh(account)
     return SuccessSchema(success=True)
 
 @router.get('/{account}/login-code')

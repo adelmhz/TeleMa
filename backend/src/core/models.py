@@ -18,8 +18,12 @@ class Account(Base):
     status = Column(String(55), nullable=True)
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
     login_code = Column(String(55), nullable=True)
+    reports = relationship(
+        'Report', back_populates='account'
+    )
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='accounts')
+
 
     @staticmethod
     async def get_all_accounts(db: Session):
@@ -53,7 +57,7 @@ class Account(Base):
 class Member(Base):
     __tablename__ = 'members'
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(55), nullable=True)
+    username = Column(String(55), nullable=True, unique=True)
     status = Column(String(55), nullable=True)
     action_time = Column(DateTime, default=datetime.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.id'))
@@ -124,3 +128,21 @@ class Message(Base):
         db.delete(message)
         db.commit()
         return 'ok'
+
+class Report(Base):
+    __tablename__ = 'reports'
+    id = Column(Integer, primary_key=True, index=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account = relationship('Account', back_populates='reports')
+    action = Column(String(55), nullable=True)
+
+    @staticmethod
+    def create_report(db: Session, account_id: int, action: str):
+        new_report = Report(
+            account_id=account_id,
+            action=action
+        )
+        db.add(new_report)
+        db.commit()
+        db.refresh(new_report)
+        return new_report

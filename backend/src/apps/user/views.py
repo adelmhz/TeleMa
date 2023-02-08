@@ -15,7 +15,7 @@ router = APIRouter(
 async def get_user_status(
     user: User=Depends(get_user_by_header)
 ):
-    return Response(content={'is_active': user.is_active})
+    return {'is_active': user.is_active}
 
 @router.get('/me/status/step', response_model=UserStatusSchema)
 async def get_user_status_step(
