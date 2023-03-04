@@ -28,6 +28,3 @@ Answer 1
 #### Question 2
 
 Answer 2
-
-
-![Logo](https://telegramtools.io/wp-content/uploads/2020/09/Untitled-1.png.webp)
