@@ -11,34 +11,12 @@ Telema is an all-in-one platform for Telegram account management. With Telema, y
 - Add real members to your channels or groups
 - Send bulk messages to your targeted audience in an efficient and effective manner
 
-## Documentation
-
-[Documentation](https://linktodocumentation)
-
-
-## Deployment
-
-To deploy this project run
-
-```bash
-  python run deploy
-```
-
 
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
 
 `API_TOKEN` of telegram bot
-
-
-## Running Tests
-
-To run tests, run the following command
-
-```bash
-  npm run test
-```
 
 
 ## FAQ
